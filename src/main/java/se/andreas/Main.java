@@ -1,18 +1,18 @@
 package se.andreas;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Lexer.Token> tokens = Lexer.lex("Hej");
+        ArrayList<Lexer.Token> tokens = Lexer.lex("rq");
         System.out.println("Tokens: " + tokens);
 
-        Parser parser = new Parser(tokens, "Hejsan hoppsan");
+        Parser parser = new Parser(tokens);
 
         Parser.ASTNode parseTree = parser.parse();
-        String result = parseTree.evaluate();
+        System.out.println(parseTree);
+        String result = parseTree.evaluate("Hejsan hoppsan");
 
         System.out.println("Result: " + result);
 
