@@ -66,9 +66,9 @@ public class Parser {
         }
     }
 
-    // Parse an expression, which is a sequence of terms separated by 'or' (|)
+    // består av en eller flera termenr skiljda med or
     private ASTNode expression() {
-        // Parse the first term
+        // parsa första termen
         ASTNode node = term();
         // While there are 'or' tokens, parse additional terms
         while (match(Lexer.Type.Or)) {
@@ -81,23 +81,20 @@ public class Parser {
 
     // Parse a term, which is a sequence of factors
     private ASTNode term() {
-        // Parse the first factor
-        ASTNode node = factor();
+        // skapa concatnode
+        ArrayList<ASTNode> factors = new ArrayList<>();
         // While there are more factors (characters, any, or groups), parse them
         while (canPeek() && (peek().type == Lexer.Type.Char || peek().type == Lexer.Type.Any || peek().type == Lexer.Type.LParen)) {
-            ASTNode nextFactor = factor();
+            // lägg till barn i concat
+            ASTNode factor = factor();
             // Create a ConcatNode to represent concatenation
-            node = new ConcatNode(node, nextFactor);
+            factors.add(factor);
         }
-        return node;
+        return new ConcatNode(factors);
     }
 
     // Parse a factor, which can be a character, any character, group, etc.
     private ASTNode factor() {
-        // Check if there are more tokens to read
-        if (!canPeek()) {
-            throw new RuntimeException("Unexpected end of input");
-        }
         // Get the current token
         Lexer.Token token = peek();
         // Determine the type of factor based on the token type
@@ -270,9 +267,10 @@ public class Parser {
 
     // Node representing concatenation
     class ConcatNode extends ASTNode {
-        public ConcatNode(ASTNode left, ASTNode right) {
-            addOperand(left);
-            addOperand(right);
+        public ConcatNode(ArrayList<ASTNode> children) {
+            for (ASTNode child : children){
+                addOperand(child);
+            }
         }
 
         @Override
