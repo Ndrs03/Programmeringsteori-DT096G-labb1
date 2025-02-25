@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Lexer.Token> tokens = Lexer.lex("rq");
+        ArrayList<Lexer.Token> tokens = Lexer.lex("Hej");
         System.out.println("Tokens: " + tokens);
 
         Parser parser = new Parser(tokens);

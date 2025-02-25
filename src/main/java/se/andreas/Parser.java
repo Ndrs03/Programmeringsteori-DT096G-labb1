@@ -9,10 +9,49 @@ public class Parser {
     // Current position in the token list
     private int current = 0;
 
-
-    // Constructor to initialize the parser with tokens and input
+    // Constructor to initialize the parser with tokens
     public Parser(ArrayList<Lexer.Token> tokens) {
         this.tokens = tokens;
+    }
+
+    // Check if there are more tokens to read
+    private boolean canPeek() {
+        return current < tokens.size();
+    }
+
+    // Get the current token without consuming it
+    private Lexer.Token peek() {
+        if (canPeek()) {
+            return tokens.get(current);
+        }
+        throw new RuntimeException("Unexpected end of input");
+    }
+
+    // Move to the next token and return the current token
+    private Lexer.Token advance() {
+        if (canPeek()) {
+            return tokens.get(current++);
+        }
+        throw new RuntimeException("Unexpected end of input");
+    }
+
+    // Check if the current token matches the expected type and consume it
+    private boolean match(Lexer.Type type) {
+        if (canPeek() && peek().type == type) {
+            advance();
+            return true;
+        }
+        return false;
+    }
+
+    // Consume the current token if it matches the expected type
+    private Lexer.Token consume(Lexer.Type type) {
+//        System.out.println("About to consume: " + peek());
+        if (match(type)) {
+//            System.out.println("Returning: " + tokens.get(current-1));
+            return tokens.get(current-1);
+        }
+        throw new RuntimeException("Expected token: " + type);
     }
 
     // Entry point for parsing the tokens into an AST
@@ -107,52 +146,13 @@ public class Parser {
         }
     }
 
-    // Check if there are more tokens to read
-    private boolean canPeek() {
-        return current < tokens.size();
-    }
 
-    // Get the current token without consuming it
-    private Lexer.Token peek() {
-        if (canPeek()) {
-            return tokens.get(current);
-        }
-        throw new RuntimeException("Unexpected end of input");
-    }
-
-    // Move to the next token and return the current token
-    private Lexer.Token advance() {
-        if (canPeek()) {
-            return tokens.get(current++);
-        }
-        throw new RuntimeException("Unexpected end of input");
-    }
-
-    // Check if the current token matches the expected type and consume it
-    private boolean match(Lexer.Type type) {
-        if (canPeek() && peek().type == type) {
-            advance();
-            return true;
-        }
-        return false;
-    }
-
-    // Consume the current token if it matches the expected type
-    private Lexer.Token consume(Lexer.Type type) {
-        System.out.println("About to consume: " + peek());
-        if (match(type)) {
-            System.out.println("Returning: " + tokens.get(current-1));
-            return tokens.get(current-1); // kan vara fel
-        }
-        throw new RuntimeException("Expected token: " + type);
-    }
-
-
+    // Abstract base class for AST nodes
     abstract static class ASTNode {
-        // alla barnnoder (operander)
+        // List of child nodes (operands)
         protected List<ASTNode> operands = new ArrayList<>();
 
-        // abstract metod för att utvärdera noden
+        // Abstract method to evaluate the node
         public abstract String evaluate(String input);
 
         // Add a child node
@@ -165,13 +165,39 @@ public class Parser {
             return operands;
         }
 
-        public String toString(){
+        // Override toString() to provide a detailed representation of the parse tree
+        @Override
+        public String toString() {
+            return toStringHelper(0); // Start with indentation level 0
+        }
+
+        // Helper method to handle indentation
+        private String toStringHelper(int indentLevel) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("ASTNode: " + this.getClass().getSimpleName() + "\n");
-            for(ASTNode operand : operands){
-                stringBuilder.append("I- " + operand.getClass().getSimpleName() + "\n");
+            // Add indentation
+            for (int i = 0; i < indentLevel; i++) {
+                stringBuilder.append("  ");
             }
+            // Add node type
+            stringBuilder.append(this.getClass().getSimpleName());
+            // Add node-specific details
+            stringBuilder.append(getNodeDetails());
+            stringBuilder.append(" [\n");
+            // Add child nodes with increased indentation
+            for (ASTNode operand : operands) {
+                stringBuilder.append(operand.toStringHelper(indentLevel + 1)).append("\n");
+            }
+            // Close the node
+            for (int i = 0; i < indentLevel; i++) {
+                stringBuilder.append("  ");
+            }
+            stringBuilder.append("]");
             return stringBuilder.toString();
+        }
+
+        // Method to provide node-specific details (override in subclasses)
+        protected String getNodeDetails() {
+            return "";
         }
     }
 
@@ -191,6 +217,11 @@ public class Parser {
             }
             return "";
         }
+
+        @Override
+        protected String getNodeDetails() {
+            return " ('" + value + "')";
+        }
     }
 
     // Node representing any character
@@ -202,6 +233,11 @@ public class Parser {
                 return String.valueOf(input.charAt(0));
             }
             return "";
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (.)";
         }
     }
 
@@ -225,6 +261,11 @@ public class Parser {
             }
             return "";
         }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (+)";
+        }
     }
 
     // Node representing concatenation
@@ -239,15 +280,13 @@ public class Parser {
             // Evaluate the left and right operands
             String leftResult = operands.get(0).evaluate(input);
             String rightResult = operands.get(1).evaluate(input);
-//            if (leftResult.isEmpty()) {
-//                return "";
-//            }
-
-//            if (rightResult.isEmpty()) {
-//                return "";
-//            }
             // Return the concatenation of both results
             return leftResult + rightResult;
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (concat)";
         }
     }
 
@@ -261,6 +300,11 @@ public class Parser {
         public String evaluate(String input) {
             // Evaluate the expression inside the group
             return operands.get(0).evaluate(input);
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (group)";
         }
     }
 
@@ -280,6 +324,11 @@ public class Parser {
                 operandResult = operands.get(0).evaluate(input);
             }
             return result.toString();
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (*)";
         }
     }
 
@@ -305,6 +354,11 @@ public class Parser {
             }
             return result.toString();
         }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (count=" + count + ")";
+        }
     }
 
     // Node representing case-insensitive matching
@@ -321,6 +375,11 @@ public class Parser {
                 return "";
             }
             return operandResult.toLowerCase();
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (case-insensitive)";
         }
     }
 
@@ -342,6 +401,11 @@ public class Parser {
             }
             // Implement capture group logic here
             return operandResult;
+        }
+
+        @Override
+        protected String getNodeDetails() {
+            return " (capture=" + captureGroup + ")";
         }
     }
 }
