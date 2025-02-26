@@ -5,16 +5,16 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Lexer.Token> tokens = Lexer.lex("(ba*)*+.*");
+        ArrayList<Lexer.Token> tokens = Lexer.lex("abc(.)\\O{1}");
         System.out.println("Tokens: " + tokens);
 
         Parser parser = new Parser(tokens);
 
         Parser.ASTNode parseTree = parser.parse();
         System.out.println(parseTree);
-        String result = parseTree.evaluate("Hejsan hoppsan");
+//        String result = parseTree.evaluate("Hejsan hoppsan");
 
-        System.out.println("Result: " + result);
+//        System.out.println("Result: " + result);
 
 
 

@@ -112,12 +112,21 @@ public class Parser {
             node = new CaseInsensitiveNode(node);
         }
 
-        // så länge det finns 'or' tecken
         if (consumeIfMatchesType(Lexer.Type.Or) != null) {
             ASTNode right = term();
             node = new OrNode(node, right);
         }
 
+        if (consumeIfMatchesType(Lexer.Type.BackslashO) != null) {
+            // Consume the capture group token and parse the capture group number
+            consumeIfMatchesType(Lexer.Type.BackslashO);
+            consumeIfMatchesType(Lexer.Type.LBrace);
+            Lexer.Token captureGroupToken = consumeIfMatchesType(Lexer.Type.Number);
+            consumeIfMatchesType(Lexer.Type.RBrace);
+            assert captureGroupToken != null;
+            int captureGroup = Integer.parseInt(captureGroupToken.content);
+            node = new CaptureNode(node, captureGroup);
+        }
 
         return node;
     }
@@ -136,12 +145,18 @@ public class Parser {
         while (canPeek() && (peek().type == Lexer.Type.Char || peek().type == Lexer.Type.Any || peek().type == Lexer.Type.LParen)) {
             // lägg till barn i concat
             ASTNode factor = factor();
-            // kolla tecknet efter
+            // kolla tecknet efter för att hitta * eller {}
             if (currentTypeIs(Lexer.Type.Star)) {
                 consumeIfMatchesType(Lexer.Type.Star);
-                // Wrap the CharNode in a RepeatNode
-//                return new RepeatNode(new CharNode(token.content.charAt(0)));
+                // Wrap the node in a RepeatNode
                 factor = new RepeatNode(factor);
+            } else if (currentTypeIs(Lexer.Type.LBrace)) {
+                consumeIfMatchesType(Lexer.Type.LBrace);
+                Lexer.Token numberToken = consumeIfMatchesType(Lexer.Type.Number);
+                consumeIfMatchesType(Lexer.Type.RBrace);
+                assert numberToken != null;
+                int count = Integer.parseInt(numberToken.content);
+                factor = new CountNode(factor, count);
             }
             // Create a ConcatNode to represent concatenation
             factors.add(factor);
@@ -173,33 +188,8 @@ public class Parser {
                 ASTNode expr = expression();
                 consumeIfMatchesType(Lexer.Type.RParen);
                 return new GroupNode(expr);
-            case Star:
-                // om vi kommer hit har något gått fel
-                throw new RuntimeException("Unexpected star token");
-            case LBrace:
-                // TODO: funkar ej
-                // Consume the left brace, parse the count, and consume the right brace
-                consumeIfMatchesType(Lexer.Type.LBrace);
-                Lexer.Token numberToken = consumeIfMatchesType(Lexer.Type.Number);
-                consumeIfMatchesType(Lexer.Type.RBrace);
-                int count = Integer.parseInt(numberToken.content);
-                return new CountNode(factor(), count);
-            case BackslashI:
-                // TODO: funkar ej
-                // Consume the case-insensitive token and create a CaseInsensitiveNode
-//                consumeIfMatchesType(Lexer.Type.BackslashI);
-//                return new CaseInsensitiveNode(factor());
-            case BackslashO:
-                // TODO: funkar ej
-                // Consume the capture group token and parse the capture group number
-                consumeIfMatchesType(Lexer.Type.BackslashO);
-                consumeIfMatchesType(Lexer.Type.LBrace);
-                Lexer.Token captureGroupToken = consumeIfMatchesType(Lexer.Type.Number);
-                consumeIfMatchesType(Lexer.Type.RBrace);
-                int captureGroup = Integer.parseInt(captureGroupToken.content);
-                return new CaptureNode(factor(), captureGroup);
             default:
-                // Throw an error for unexpected tokens
+                // har vi kommet hit har något gått fel... eller så är tokensarna fel
                 throw new RuntimeException("Unexpected token: " + token);
         }
     }
