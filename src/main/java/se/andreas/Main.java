@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Lexer.Token> tokens = Lexer.lex("Hej");
+        ArrayList<Lexer.Token> tokens = Lexer.lex("(ba*)*+.*");
         System.out.println("Tokens: " + tokens);
 
         Parser parser = new Parser(tokens);
@@ -29,7 +29,7 @@ public class Main {
 // TERM = FACTOR+
 //
 // # faktor är en komponent som kan vara bokstäver, valfritt tecken, grupp, räknare eller repetition.
-// FACTOR = CHAR+ | ANY | GROUP | COUNT | REPETITION | ESCAPE | CASE_INSENSITIVE | CAPTURE
+// FACTOR = CHAR+ | ANY | GROUP | COUNT | REPETITION | ESCAPE | CAPTURE
 //
 // #En grupp är en term inom parentes
 // GROUP = "(", EXPR, ")"
@@ -41,10 +41,10 @@ public class Main {
 // COUNT = FACTOR, "{", DIGIT+, "}"
 //
 // # case okänslighet
-// CASE_INSENSITIVE = FACTOR, "\I"
+// CASE_INSENSITIVE = EXPR, "\I" | GROUP, "\I"
 //
 // # capture group
-// CAPTURE = FACTOR, "\O{", DIGIT+, "}"
+// CAPTURE = EXPR, "\O{", DIGIT+, "}"
 //
 // # Escapa en char om man ex vill matcha en . så \.
 // ESCAPE = "\\", CHAR
