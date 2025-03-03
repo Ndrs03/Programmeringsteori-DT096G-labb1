@@ -10,15 +10,23 @@ public class CountNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // Evaluate the operand a specific number of times
         StringBuilder result = new StringBuilder();
+        String remainingInput = input;
+
+        // försök matcha så långt det går
         for (int i = 0; i < count; i++) {
-            String operandResult = children.get(0).evaluate(input);
+            // kolla resterande input mot barnet
+            String operandResult = children.get(0).evaluate(remainingInput);
             if (operandResult.isEmpty()) {
-                return "";
+                // om ingen match hittades sluta upprepa
+                break;
             }
+            // spara den matchade biten
             result.append(operandResult);
+            // ta bort den matchade delen från återstående input
+            remainingInput = remainingInput.substring(operandResult.length());
         }
+
         return result.toString();
     }
 

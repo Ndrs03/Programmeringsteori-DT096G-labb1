@@ -2,19 +2,34 @@ package se.andreas;
 
 import java.util.ArrayList;
 
+/*
+checklista för eval:
+Concat ok?
+Char ok
+Any ok
+repeat ok?
+count ok
+case insensitive ok todo returnera med orginalveralisiring
+group ok
+
+ */
+
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Lexer.Token> tokens = Lexer.lex("abc(.)\\O{1}");
-        System.out.println("Tokens: " + tokens);
+        // TODO: input funkar ej med siffermönster
+        String pattern = ".*";
+        String input = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 
+        ArrayList<Lexer.Token> tokens = Lexer.lex(pattern);
         Parser parser = new Parser(tokens);
-
-        Parser.ASTNode parseTree = parser.parse();
+        ASTNode parseTree = parser.parse();
         System.out.println(parseTree);
-//        String result = parseTree.evaluate("Hejsan hoppsan");
+        String result = parseTree.evaluate(input);
 
-//        System.out.println("Result: " + result);
+//        System.out.println(parseTree);
+
+        System.out.println("\nPattern: " + pattern + "\nInput: " + input + "\nResult: " + result);
 
 
 

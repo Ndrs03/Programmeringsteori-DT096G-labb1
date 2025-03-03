@@ -13,9 +13,11 @@ public class CharNode extends ASTNode {
     @Override
     public String evaluate(String input) {
         if (!input.isEmpty() && input.charAt(0) == value) {
-            return String.valueOf(value); // Return the matched character
+            // Return the matched character and consume it
+            return String.valueOf(value);
         }
-        return ""; // No match
+        // No match
+        return "";
     }
 
     @Override

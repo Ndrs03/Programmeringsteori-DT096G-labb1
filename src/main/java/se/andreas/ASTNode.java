@@ -13,7 +13,7 @@ public abstract class ASTNode {
     /**
      * Evaluerar parseträdet mot en input
      * @param input en sträng med texten som ska matchas mot
-     * @return Returnerar en sträng med det som matcher, om inget returneras en tom sträng
+     * @return Returnerar en sträng med det första i input som matcher, om inget returneras en tom sträng
      */
     public abstract String evaluate(String input);
 

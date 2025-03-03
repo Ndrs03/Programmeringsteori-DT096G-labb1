@@ -7,13 +7,23 @@ public class RepeatNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // Evaluate the operand zero or more times
         StringBuilder result = new StringBuilder();
-        String operandResult = children.get(0).evaluate(input);
-        while (!operandResult.isEmpty()) {
+        String remainingInput = input;
+
+        // försök matcha så långt det går
+        while (true) {
+            // kolla resterande input mot barnet
+            String operandResult = children.get(0).evaluate(remainingInput);
+            if (operandResult.isEmpty()) {
+                // om ingen match hittades sluta upprepa
+                break;
+            }
+            // spara den matchade biten
             result.append(operandResult);
-            operandResult = children.get(0).evaluate(input);
+            // ta bort den matchade delen från återstående input
+            remainingInput = remainingInput.substring(operandResult.length());
         }
+
         return result.toString();
     }
 

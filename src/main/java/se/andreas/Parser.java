@@ -1,11 +1,10 @@
 package se.andreas;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Parser {
     // tokens genererade av lexeraren
-    public final ArrayList<Lexer.Token> tokens;
+    private final ArrayList<Lexer.Token> tokens;
     // nuvarande position i tokenslistan
     private int current = 0;
 
@@ -56,15 +55,13 @@ public class Parser {
     }
 
     /**
-     * Consume token om den matchar parametern
+     * Consume token om den matchar parametern, bör kanske bytas ut eller använda ngt annat i resterande kod
      *
      * @param type typen som jämförs med
      * @return Token som kosumerades eller null om inget konsumerades
      */
     private Lexer.Token consumeIfMatchesType(Lexer.Type type) {
-//        System.out.println("About to consume: " + peek());
         if (canPeek() && peek().type == type) {
-//            System.out.println("Returning: " + tokens.get(current-1));
             Lexer.Token currentToken = tokens.get(current);
             advance();
             return currentToken;
