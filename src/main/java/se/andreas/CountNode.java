@@ -13,7 +13,7 @@ public class CountNode extends ASTNode {
         StringBuilder result = new StringBuilder();
         String remainingInput = input;
 
-        // försök matcha så långt det går
+
         for (int i = 0; i < count; i++) {
             // kolla resterande input mot barnet
             String operandResult = children.get(0).evaluate(remainingInput);

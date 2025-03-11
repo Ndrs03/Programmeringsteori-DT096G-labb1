@@ -35,16 +35,14 @@ public class CaseInsensitiveNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // Convert the input to lowercase for case-insensitive matching
+        // konvertera input till lower case
         String lowercaseInput = input.toLowerCase();
 
         for (ASTNode child : getChildren()) {
             makeCaseInsensitive(child);
         }
 
-        // Case insensitive borde bara kunna ha ett barn så en for each borde inte behövas
         return children.get(0).evaluate(lowercaseInput);
-
     }
 
     @Override

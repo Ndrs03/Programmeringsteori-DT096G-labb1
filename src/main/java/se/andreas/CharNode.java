@@ -12,11 +12,11 @@ public class CharNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
+        // kolla om value matchar den första positionen i input
         if (!input.isEmpty() && input.charAt(0) == value) {
-            // Return the matched character and consume it
             return String.valueOf(value);
         }
-        // No match
+        // ingen matchning
         return "";
     }
 

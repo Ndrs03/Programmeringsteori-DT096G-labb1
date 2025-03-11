@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Lexer {
-    public static enum Type {
+    public enum Type {
         Char,
         Any,
         Or,
@@ -95,19 +95,14 @@ public class Lexer {
                             numberBuilder.append(chars[i]);
                             i++;
                         }
-                        i--; // gå tillbaka ett steg, lite av ett fuskbygge men kanske förbättrar åvanstående 3 rader
+                        i--; // gå tillbaka ett steg, lite av ett fuskbygge
                         tokens.add(new Token(Type.Number, numberBuilder.toString()));
                     } else {
                         tokens.add(new Token(Type.Char, String.valueOf(c)));
                     }
                     break;
-
             }
-
-
         }
-
-
         return tokens;
     }
 }

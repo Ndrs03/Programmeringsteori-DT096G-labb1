@@ -22,7 +22,7 @@ public class Parser {
     // #######################################################################
 
     /**
-     * Kollar vi är i slutet av tokenlistan
+     * Kollar vi är i slutet av tokenlistan borde ha använt EOF token ist
      *
      * @return En bool för svaret
      */
@@ -93,7 +93,6 @@ public class Parser {
         }
     }
 
-    // består av en eller flera termenr skiljda med or
 
     /**
      * En expression är en eller flera termer skiljda med 'Or'
@@ -109,14 +108,14 @@ public class Parser {
             node = new CaseInsensitiveNode(node);
         }
 
-        if (consumeIfMatchesType(Lexer.Type.Or) != null) {
+        // medans det finns ornoder att hämta
+        while (consumeIfMatchesType(Lexer.Type.Or) != null) {
             ASTNode right = term();
             node = new OrNode(node, right);
         }
 
         if (consumeIfMatchesType(Lexer.Type.BackslashO) != null) {
             // Consume the capture group token and parse the capture group number
-            consumeIfMatchesType(Lexer.Type.BackslashO);
             consumeIfMatchesType(Lexer.Type.LBrace);
             Lexer.Token captureGroupToken = consumeIfMatchesType(Lexer.Type.Number);
             consumeIfMatchesType(Lexer.Type.RBrace);
@@ -128,8 +127,6 @@ public class Parser {
         return node;
     }
 
-    // Parse a term, which is a sequence of factors
-
     /**
      * En term är en eller flera faktorer
      *
@@ -138,15 +135,15 @@ public class Parser {
     private ASTNode term() {
         // skapa concatnode
         ArrayList<ASTNode> factors = new ArrayList<>();
-        // While there are more factors (characters, any, or groups), parse them
+        // medans det finns faktorer
         while (canPeek() && (peek().type == Lexer.Type.Char || peek().type == Lexer.Type.Any || peek().type == Lexer.Type.LParen)) {
-            // lägg till barn i concat
+
             ASTNode factor = factor();
             // kolla tecknet efter för att hitta * eller {}
             if (currentTypeIs(Lexer.Type.Star)) {
                 consumeIfMatchesType(Lexer.Type.Star);
-                // Wrap the node in a RepeatNode
-                factor = new RepeatNode(factor);
+                ASTNode endAt = expression();
+                factor = new RepeatNode(factor, endAt);
             } else if (currentTypeIs(Lexer.Type.LBrace)) {
                 consumeIfMatchesType(Lexer.Type.LBrace);
                 Lexer.Token numberToken = consumeIfMatchesType(Lexer.Type.Number);
@@ -155,7 +152,6 @@ public class Parser {
                 int count = Integer.parseInt(numberToken.content);
                 factor = new CountNode(factor, count);
             }
-            // Create a ConcatNode to represent concatenation
             factors.add(factor);
         }
         return new ConcatNode(factors);
@@ -170,7 +166,6 @@ public class Parser {
     private ASTNode factor() {
         // Get the current token
         Lexer.Token token = peek();
-        // Determine the type of factor based on the token type
         switch (token.type) {
             case Char:
                 // behöver egentligen inte checka om den matchar typen för det vet vi redan

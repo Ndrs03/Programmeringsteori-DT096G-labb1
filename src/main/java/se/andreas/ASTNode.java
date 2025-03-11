@@ -9,6 +9,7 @@ import java.util.List;
 public abstract class ASTNode {
     // Martin kallar denna för operands, men children låter roligare och funkar bättre i min hjärna
     protected List<ASTNode> children = new ArrayList<>();
+    protected ASTNode parent;
 
     /**
      * Evaluerar parseträdet mot en input
@@ -22,7 +23,9 @@ public abstract class ASTNode {
      * @param node Barnet
      */
     public void addChild(ASTNode node) {
+        node.parent = this;
         children.add(node);
+
     }
 
     /**
@@ -50,23 +53,19 @@ public abstract class ASTNode {
      */
     private String toStringHelper(int indentLevel) {
         StringBuilder stringBuilder = new StringBuilder();
-        // Add indentation
-        for (int i = 0; i < indentLevel; i++) {
-            stringBuilder.append("  ");
-        }
-        // Add node type
+        // lägg till indentering
+        stringBuilder.append("  ".repeat(Math.max(0, indentLevel)));
+        // hämta klassens namn
         stringBuilder.append(this.getClass().getSimpleName());
-        // Add node-specific details
+        // hämta specifika detaljer
         stringBuilder.append(getNodeDetails());
         stringBuilder.append(" [\n");
-        // Add child nodes with increased indentation
+        // lägg till barnen med en extra indentering
         for (ASTNode operand : children) {
             stringBuilder.append(operand.toStringHelper(indentLevel + 1)).append("\n");
         }
-        // Close the node
-        for (int i = 0; i < indentLevel; i++) {
-            stringBuilder.append("  ");
-        }
+        // stäng noden i trädet
+        stringBuilder.append("  ".repeat(Math.max(0, indentLevel)));
         stringBuilder.append("]");
         return stringBuilder.toString();
     }

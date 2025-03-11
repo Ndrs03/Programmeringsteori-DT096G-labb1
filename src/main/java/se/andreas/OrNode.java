@@ -8,10 +8,10 @@ public class OrNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // Evaluate the left and right operands
+        // evaluera höger och vänster, ornoden borde kanske kunna ha fler barn
         String leftResult = children.get(0).evaluate(input);
         String rightResult = children.get(1).evaluate(input);
-        // Return success if either operand succeeds
+        // returnera ett av resultaten,
         if (!leftResult.isEmpty()) {
             return leftResult;
         } else if (!rightResult.isEmpty()) {

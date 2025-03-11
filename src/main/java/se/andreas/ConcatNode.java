@@ -11,32 +11,44 @@ public class ConcatNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // Try matching the pattern at every possible starting position in the input
+        // försök att matcha mönstret mot input vid varje position i input
         for (int start = 0; start <= input.length(); start++) {
             StringBuilder result = new StringBuilder();
             String remainingInput = input.substring(start);
 
             boolean match = true;
+//            int index = 0;
+            // kolla om varje barn i concat matchar vid den nuvarande positionen
             for (ASTNode child : children) {
+                /*
+                om det finns fler barn efter repeat, skicka in de till en medlem (kanske concat) och repeata till den stöter på barnet?
+                eval concat och sedan index av det returnerade
+                lägg till en typ endnode som barn till repeatnode
+                 */
+//                if (child instanceof RepeatNode){
+//                    ArrayList<ASTNode> remainingChilds = (ArrayList<ASTNode>) children.subList(index, children.size());
+//                }
+
                 String childResult = child.evaluate(remainingInput);
                 if (childResult.isEmpty()) {
-                    // If any child fails to match, move to the next starting position
+                    // om ett barn inte matchar, börja på nästa position i input
                     match = false;
                     break;
                 }
-                // Append the matched part to the result
+                // lägg till den matchande delen i result
                 result.append(childResult);
-                // Consume the matched part from the remaining input
+                // ta bort den matchade delen från remaining
                 remainingInput = remainingInput.substring(childResult.length());
             }
 
             if (match) {
-                // If all children matched, return the result
+                // om alla barnen matchar har concat matchat
                 return result.toString();
             }
+//            index++;
         }
 
-        // If no match is found, return an empty string
+        // om ingen match hittas returnera en tom string
         return "";
     }
 

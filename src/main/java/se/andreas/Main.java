@@ -1,5 +1,8 @@
 package se.andreas;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /*
@@ -7,10 +10,11 @@ checklista för eval:
 Concat ok?
 Char ok
 Any ok
-repeat ok?
+repeat todo för girig
 count ok
 case insensitive ok todo returnera med orginalveralisiring
 group ok
+return group todo funkar ej
 
  */
 
@@ -18,10 +22,38 @@ group ok
 public class Main {
     public static void main(String[] args) {
         // TODO: input funkar ej med siffermönster
-        String pattern = ".*";
+        String pattern = "lo* could.{3}";
         String input = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+//        String pattern = "a*b";
+//        String input = "aaab";
+
+/*
+        // kolla om det finns ett möster
+        if (args.length < 1) {
+            System.err.println("Usage: match <pattern> < input.txt");
+            System.exit(1);
+        }
+        String pattern = args[0];
+        System.out.println("Pattern: " + pattern);
+
+        // läs från input stream <
+        StringBuilder inputBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                inputBuilder.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading input: " + e.getMessage());
+            System.exit(1);
+        }
+
+        String input = inputBuilder.toString().trim(); // Remove trailing newline
+        System.out.println("Input:\n" + input);
+*/
 
         ArrayList<Lexer.Token> tokens = Lexer.lex(pattern);
+        System.out.println(tokens);
         Parser parser = new Parser(tokens);
         ASTNode parseTree = parser.parse();
         System.out.println(parseTree);
@@ -29,10 +61,11 @@ public class Main {
 
 //        System.out.println(parseTree);
 
-        System.out.println("\nPattern: " + pattern + "\nInput: " + input + "\nResult: " + result);
-
-
-
+        if (!result.isEmpty()){
+            System.out.println("\nPattern: " + pattern + "\nInput: " + input + "\nResult: " + result);
+            System.exit(0);
+        }
+        System.exit(1);
     }
 }
 
