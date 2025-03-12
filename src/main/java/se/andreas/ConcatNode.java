@@ -17,18 +17,8 @@ public class ConcatNode extends ASTNode {
             String remainingInput = input.substring(start);
 
             boolean match = true;
-//            int index = 0;
             // kolla om varje barn i concat matchar vid den nuvarande positionen
             for (ASTNode child : children) {
-                /*
-                om det finns fler barn efter repeat, skicka in de till en medlem (kanske concat) och repeata till den stöter på barnet?
-                eval concat och sedan index av det returnerade
-                lägg till en typ endnode som barn till repeatnode
-                 */
-//                if (child instanceof RepeatNode){
-//                    ArrayList<ASTNode> remainingChilds = (ArrayList<ASTNode>) children.subList(index, children.size());
-//                }
-
                 String childResult = child.evaluate(remainingInput);
                 if (childResult.isEmpty()) {
                     // om ett barn inte matchar, börja på nästa position i input
@@ -45,7 +35,6 @@ public class ConcatNode extends ASTNode {
                 // om alla barnen matchar har concat matchat
                 return result.toString();
             }
-//            index++;
         }
 
         // om ingen match hittas returnera en tom string

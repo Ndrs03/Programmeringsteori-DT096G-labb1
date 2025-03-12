@@ -46,9 +46,9 @@ public class Main {
         System.out.println("Input:\n" + input);
 */
 
-        // TODO: input funkar ej med siffermönster
-        String pattern = ".*";
-        String input = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+        // todo group funkar ej med repeat och count
+        String pattern = "(Waterloo)*";
+        String input = "Waterloo Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 //        String pattern = "a*b";
 //        String input = "aaab";
 

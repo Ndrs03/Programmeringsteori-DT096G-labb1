@@ -10,7 +10,19 @@ public class RepeatNode extends ASTNode {
     public String evaluate(String input) {
         StringBuilder result = new StringBuilder();
         String remainingInput = input;
-        String endAtString = children.get(1).evaluate(input);
+
+        String endAtString = "";
+        // om vi har endAt noder
+        if (!children.get(1).children.isEmpty()) {
+            endAtString = children.get(1).evaluate(input);
+            if (endAtString.isEmpty()){
+                // vår endAt condition failade att matcha
+                return "";
+            }
+        }
+
+
+//        String endAtString = children.get(1).evaluate(input);
 //        System.out.println("DEBUG " + endAtString);
 
         // ful lösning men den funkar

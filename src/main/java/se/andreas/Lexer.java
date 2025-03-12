@@ -61,6 +61,18 @@ public class Lexer {
                     break;
                 case '{':
                     tokens.add(new Token(Type.L_BRACE, "{"));
+                    i++;
+                    if (Character.isDigit(chars[i])) {
+                        StringBuilder numberBuilder = new StringBuilder();
+                        while (i < chars.length && Character.isDigit(chars[i])) {
+                            numberBuilder.append(chars[i]);
+                            i++;
+                        }
+                        i--; // gå tillbaka ett steg, lite av ett fuskbygge
+                        tokens.add(new Token(Type.NUMBER, numberBuilder.toString()));
+                    } else {
+                        throw new RuntimeException("Wrong count sequence");
+                    }
                     break;
                 case '}':
                     tokens.add(new Token(Type.R_BRACE, "}"));
@@ -88,17 +100,9 @@ public class Lexer {
                     }
                     break;
                 default:
-                    if (Character.isDigit(c)) {
-                        StringBuilder numberBuilder = new StringBuilder();
-                        while (i < chars.length && Character.isDigit(chars[i])) {
-                            numberBuilder.append(chars[i]);
-                            i++;
-                        }
-                        i--; // gå tillbaka ett steg, lite av ett fuskbygge
-                        tokens.add(new Token(Type.NUMBER, numberBuilder.toString()));
-                    } else {
-                        tokens.add(new Token(Type.CHAR, String.valueOf(c)));
-                    }
+
+                    tokens.add(new Token(Type.CHAR, String.valueOf(c)));
+
                     break;
             }
         }
