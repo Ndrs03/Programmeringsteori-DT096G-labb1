@@ -1,21 +1,20 @@
 package se.andreas;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class Lexer {
     public enum Type {
-        Char,
-        Any,
-        Or,
-        Star,
-        LParen,
-        RParen,
-        LBrace,
-        RBrace,
-        BackslashI,
-        BackslashO,
-        Number
+        CHAR,
+        ANY,
+        OR,
+        STAR,
+        L_PAREN,
+        R_PAREN,
+        L_BRACE,
+        R_BRACE,
+        BACKSLASH_I,
+        BACKSLASH_O,
+        NUMBER
     }
 
     public static class Token {
@@ -28,9 +27,9 @@ public class Lexer {
         }
 
         public String toString() {
-            if (type == Type.Char) {
+            if (type == Type.CHAR) {
                 return "Char<" + content + ">";
-            } else if (type == Type.Number) {
+            } else if (type == Type.NUMBER) {
                 return "Number<" + content + ">";
             }
             return type.toString();
@@ -46,25 +45,25 @@ public class Lexer {
             char c = chars[i];
             switch (c) {
                 case '.':
-                    tokens.add(new Token(Type.Any, "."));
+                    tokens.add(new Token(Type.ANY, "."));
                     break;
                 case '+':
-                    tokens.add(new Token(Type.Or, "+"));
+                    tokens.add(new Token(Type.OR, "+"));
                     break;
                 case '*':
-                    tokens.add(new Token(Type.Star, "*"));
+                    tokens.add(new Token(Type.STAR, "*"));
                     break;
                 case '(':
-                    tokens.add(new Token(Type.LParen, "("));
+                    tokens.add(new Token(Type.L_PAREN, "("));
                     break;
                 case ')':
-                    tokens.add(new Token(Type.RParen, ")"));
+                    tokens.add(new Token(Type.R_PAREN, ")"));
                     break;
                 case '{':
-                    tokens.add(new Token(Type.LBrace, "{"));
+                    tokens.add(new Token(Type.L_BRACE, "{"));
                     break;
                 case '}':
-                    tokens.add(new Token(Type.RBrace, "}"));
+                    tokens.add(new Token(Type.R_BRACE, "}"));
                     break;
                 case '\\':
                     // kolla om det finns något bakom \
@@ -74,16 +73,16 @@ public class Lexer {
                     char next = chars[i + 1];
                     switch (next) {
                         case 'I':
-                            tokens.add(new Token(Type.BackslashI, "\\I"));
+                            tokens.add(new Token(Type.BACKSLASH_I, "\\I"));
                             i++; // \I är två steg
                             break;
                         case 'O':
-                            tokens.add(new Token(Type.BackslashO, "\\O"));
+                            tokens.add(new Token(Type.BACKSLASH_O, "\\O"));
                             i++;
                             break;
                         default:
                             // escaped chars ex. \.
-                            tokens.add(new Token(Type.Char, String.valueOf(next)));
+                            tokens.add(new Token(Type.CHAR, String.valueOf(next)));
                             i++;
                             break;
                     }
@@ -96,9 +95,9 @@ public class Lexer {
                             i++;
                         }
                         i--; // gå tillbaka ett steg, lite av ett fuskbygge
-                        tokens.add(new Token(Type.Number, numberBuilder.toString()));
+                        tokens.add(new Token(Type.NUMBER, numberBuilder.toString()));
                     } else {
-                        tokens.add(new Token(Type.Char, String.valueOf(c)));
+                        tokens.add(new Token(Type.CHAR, String.valueOf(c)));
                     }
                     break;
             }

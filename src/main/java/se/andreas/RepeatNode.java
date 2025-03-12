@@ -11,11 +11,15 @@ public class RepeatNode extends ASTNode {
         StringBuilder result = new StringBuilder();
         String remainingInput = input;
         String endAtString = children.get(1).evaluate(input);
-        System.out.println("DEBUG " + endAtString);
-        int endAtInt = input.indexOf(endAtString);
-        int current = 0;
+//        System.out.println("DEBUG " + endAtString);
+
+        // ful lösning men den funkar
+        double endAtIndex = Double.POSITIVE_INFINITY;
+        if (!endAtString.isEmpty()) {
+            endAtIndex = input.indexOf(endAtString);
+        }
         // försök matcha så långt det går
-        while (current < endAtInt) {
+        for (int current = 0; current < endAtIndex; current++) {
             // kolla resterande input mot barnet
             String operandResult = children.get(0).evaluate(remainingInput);
             if (operandResult.isEmpty()) {
@@ -26,9 +30,8 @@ public class RepeatNode extends ASTNode {
             result.append(operandResult);
             // ta bort den matchade delen från återstående input
             remainingInput = remainingInput.substring(operandResult.length());
-            current++;
         }
-
+        result.append(endAtString);
 
         return result.toString();
     }

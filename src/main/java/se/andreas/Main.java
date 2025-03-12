@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 /*
 checklista för eval:
-Concat ok?
+Concat ok
 Char ok
 Any ok
-repeat todo för girig
+repeat tror den funkar? todo "(.*) the war" ger ingen matchning men ".* the war" funkar korrekt
 count ok
-case insensitive ok todo returnera med orginalveralisiring
+case insensitive todo kanske fel syntax, vid ex Love+(Hate)\\I gör wrappar allt. Funkar ganska bra nu, men är annat syntax, blir ist Love+(Hate\\I)
 group ok
 return group todo funkar ej
 
@@ -21,12 +21,6 @@ return group todo funkar ej
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: input funkar ej med siffermönster
-        String pattern = "lo* could.{3}";
-        String input = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-//        String pattern = "a*b";
-//        String input = "aaab";
-
 /*
         // kolla om det finns ett möster
         if (args.length < 1) {
@@ -51,6 +45,12 @@ public class Main {
         String input = inputBuilder.toString().trim(); // Remove trailing newline
         System.out.println("Input:\n" + input);
 */
+
+        // TODO: input funkar ej med siffermönster
+        String pattern = ".*";
+        String input = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+//        String pattern = "a*b";
+//        String input = "aaab";
 
         ArrayList<Lexer.Token> tokens = Lexer.lex(pattern);
         System.out.println(tokens);
@@ -77,9 +77,9 @@ public class Main {
 // TERM = FACTOR+
 //
 // # faktor är en komponent som kan vara bokstäver, valfritt tecken, grupp, räknare eller repetition.
-// FACTOR = CHAR+ | ANY | GROUP | COUNT | REPETITION | ESCAPE | CAPTURE
+// FACTOR = CHAR+ | ANY+ | GROUP+ | COUNT+ | REPETITION+ | ESCAPE+ | todo CAPTURE????
 //
-// #En grupp är en term inom parentes
+// #En grupp är en EXPR inom parentes
 // GROUP = "(", EXPR, ")"
 //
 // # repition är en faktor följt av stjärna
@@ -88,8 +88,8 @@ public class Main {
 // # räknare är en faktor följt av en siffra
 // COUNT = FACTOR, "{", DIGIT+, "}"
 //
-// # case okänslighet
-// CASE_INSENSITIVE = EXPR, "\I" | GROUP, "\I"
+// # case okänslighet EXPR följt av \I
+// CASE_INSENSITIVE = EXPR, "\I"
 //
 // # capture group
 // CAPTURE = EXPR, "\O{", DIGIT+, "}"

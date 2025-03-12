@@ -22,7 +22,7 @@ public abstract class ASTNode {
      * Lägg till ett barn till noden
      * @param node Barnet
      */
-    public void addChild(ASTNode node) {
+    protected void addChild(ASTNode node) {
         node.parent = this;
         children.add(node);
 

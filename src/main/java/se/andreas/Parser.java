@@ -103,22 +103,25 @@ public class Parser {
         // parsa första termen
         ASTNode node = term();
 
-        // kolla om det finns ett \I
-        if (consumeIfMatchesType(Lexer.Type.BackslashI) != null) {
-            node = new CaseInsensitiveNode(node);
-        }
+        // kapsla in termer
+
+
 
         // medans det finns ornoder att hämta
-        while (consumeIfMatchesType(Lexer.Type.Or) != null) {
+        while (consumeIfMatchesType(Lexer.Type.OR) != null) {
             ASTNode right = term();
             node = new OrNode(node, right);
         }
 
-        if (consumeIfMatchesType(Lexer.Type.BackslashO) != null) {
-            // Consume the capture group token and parse the capture group number
-            consumeIfMatchesType(Lexer.Type.LBrace);
-            Lexer.Token captureGroupToken = consumeIfMatchesType(Lexer.Type.Number);
-            consumeIfMatchesType(Lexer.Type.RBrace);
+        // kolla om det finns ett \I
+        if (consumeIfMatchesType(Lexer.Type.BACKSLASH_I) != null) {
+            node = new CaseInsensitiveNode(node);
+        }
+
+        if (consumeIfMatchesType(Lexer.Type.BACKSLASH_O) != null) {
+            consumeIfMatchesType(Lexer.Type.L_BRACE);
+            Lexer.Token captureGroupToken = consumeIfMatchesType(Lexer.Type.NUMBER);
+            consumeIfMatchesType(Lexer.Type.R_BRACE);
             assert captureGroupToken != null;
             int captureGroup = Integer.parseInt(captureGroupToken.content);
             node = new CaptureNode(node, captureGroup);
@@ -135,19 +138,19 @@ public class Parser {
     private ASTNode term() {
         // skapa concatnode
         ArrayList<ASTNode> factors = new ArrayList<>();
-        // medans det finns faktorer
-        while (canPeek() && (peek().type == Lexer.Type.Char || peek().type == Lexer.Type.Any || peek().type == Lexer.Type.LParen)) {
+        // medans det finns faktorer, todo dålig while-condition förbättra på ngt sätt
+        while (canPeek() && (peek().type == Lexer.Type.CHAR || peek().type == Lexer.Type.ANY || peek().type == Lexer.Type.L_PAREN)) {
 
             ASTNode factor = factor();
-            // kolla tecknet efter för att hitta * eller {}
-            if (currentTypeIs(Lexer.Type.Star)) {
-                consumeIfMatchesType(Lexer.Type.Star);
-                ASTNode endAt = expression();
+            // kapsla in faktorer
+            if (currentTypeIs(Lexer.Type.STAR)) {
+                consumeIfMatchesType(Lexer.Type.STAR);
+                ASTNode endAt = term();
                 factor = new RepeatNode(factor, endAt);
-            } else if (currentTypeIs(Lexer.Type.LBrace)) {
-                consumeIfMatchesType(Lexer.Type.LBrace);
-                Lexer.Token numberToken = consumeIfMatchesType(Lexer.Type.Number);
-                consumeIfMatchesType(Lexer.Type.RBrace);
+            } else if (currentTypeIs(Lexer.Type.L_BRACE)) {
+                consumeIfMatchesType(Lexer.Type.L_BRACE);
+                Lexer.Token numberToken = consumeIfMatchesType(Lexer.Type.NUMBER);
+                consumeIfMatchesType(Lexer.Type.R_BRACE);
                 assert numberToken != null;
                 int count = Integer.parseInt(numberToken.content);
                 factor = new CountNode(factor, count);
@@ -157,8 +160,6 @@ public class Parser {
         return new ConcatNode(factors);
     }
 
-    // Parse a factor, which can be a character, any character, group, etc.
-
     /**
      * Parsa en faktor vilket är en char, grupp, stjärna etc.
      * @return trädet i detta skede
@@ -167,18 +168,18 @@ public class Parser {
         // Get the current token
         Lexer.Token token = peek();
         switch (token.type) {
-            case Char:
+            case CHAR:
                 // behöver egentligen inte checka om den matchar typen för det vet vi redan
                 // men det är ibland bra att vara övertydlig
-                consumeIfMatchesType(Lexer.Type.Char);
+                consumeIfMatchesType(Lexer.Type.CHAR);
                 return new CharNode(token.content.charAt(0));
-            case Any:
-                consumeIfMatchesType(Lexer.Type.Any);
+            case ANY:
+                consumeIfMatchesType(Lexer.Type.ANY);
                 return new AnyNode();
-            case LParen:
-                consumeIfMatchesType(Lexer.Type.LParen);
+            case L_PAREN:
+                consumeIfMatchesType(Lexer.Type.L_PAREN);
                 ASTNode expr = expression();
-                consumeIfMatchesType(Lexer.Type.RParen);
+                consumeIfMatchesType(Lexer.Type.R_PAREN);
                 return new GroupNode(expr);
             default:
                 // har vi kommet hit har något gått fel... eller så är tokensarna fel
