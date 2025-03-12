@@ -85,7 +85,7 @@ public class Parser {
     public ASTNode parse() {
         try {
             // starta parsningen
-            return expression();
+            return new ExprNode(expression());
         } catch (RuntimeException e) {
             // logga fel
             System.err.println("Parse error: " + e.getMessage());
@@ -104,8 +104,6 @@ public class Parser {
         ASTNode node = term();
 
         // kapsla in termer
-
-
 
         // medans det finns ornoder att hämta
         while (consumeIfMatchesType(Lexer.Type.OR) != null) {
@@ -138,7 +136,7 @@ public class Parser {
     private ASTNode term() {
         // skapa concatnode
         ArrayList<ASTNode> factors = new ArrayList<>();
-        // medans det finns faktorer, todo dålig while-condition förbättra på ngt sätt
+        // medans det finns faktorer
         while (canPeek() && (peek().type == Lexer.Type.CHAR || peek().type == Lexer.Type.ANY || peek().type == Lexer.Type.L_PAREN)) {
 
             ASTNode factor = factor();
@@ -157,7 +155,7 @@ public class Parser {
             }
             factors.add(factor);
         }
-        return new ConcatNode(factors);
+        return new TermNode(factors);
     }
 
     /**

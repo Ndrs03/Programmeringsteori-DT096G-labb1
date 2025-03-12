@@ -11,39 +11,24 @@ public class RepeatNode extends ASTNode {
         StringBuilder result = new StringBuilder();
         String remainingInput = input;
 
-        String endAtString = "";
-        // om vi har endAt noder
-        if (!children.get(1).children.isEmpty()) {
-            endAtString = children.get(1).evaluate(input);
-            if (endAtString.isEmpty()){
-                // vår endAt condition failade att matcha
-                return "";
-            }
-        }
-
-
-//        String endAtString = children.get(1).evaluate(input);
-//        System.out.println("DEBUG " + endAtString);
-
-        // ful lösning men den funkar
-        double endAtIndex = Double.POSITIVE_INFINITY;
-        if (!endAtString.isEmpty()) {
-            endAtIndex = input.indexOf(endAtString);
-        }
         // försök matcha så långt det går
-        for (int current = 0; current < endAtIndex; current++) {
+        while (!remainingInput.isEmpty()) {
             // kolla resterande input mot barnet
             String operandResult = children.get(0).evaluate(remainingInput);
             if (operandResult.isEmpty()) {
                 // om ingen match hittades sluta upprepa
                 break;
             }
+
             // spara den matchade biten
             result.append(operandResult);
             // ta bort den matchade delen från återstående input
             remainingInput = remainingInput.substring(operandResult.length());
+            String endAts = children.get(1).evaluate(remainingInput);
+            if (!endAts.isEmpty()) {
+                return result.append(endAts).toString();
+            }
         }
-        result.append(endAtString);
 
         return result.toString();
     }

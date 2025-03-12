@@ -19,7 +19,7 @@ public class CountNode extends ASTNode {
             String operandResult = children.get(0).evaluate(remainingInput);
             if (operandResult.isEmpty()) {
                 // om ingen match hittades sluta upprepa
-                break;
+                return "";
             }
             // spara den matchade biten
             result.append(operandResult);

@@ -7,7 +7,7 @@ public class GroupNode extends ASTNode {
 
     @Override
     public String evaluate(String input) {
-        // En grupnod innehåller alltid bara ett barn en concatnod
+        // En grupnod innehåller alltid bara ett barn en exprnod
         return children.get(0).evaluate(input);
     }
 

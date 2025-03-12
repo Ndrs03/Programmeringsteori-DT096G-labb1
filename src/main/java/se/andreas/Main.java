@@ -46,9 +46,9 @@ public class Main {
         System.out.println("Input:\n" + input);
 */
 
-        // todo group funkar ej med repeat och count
-        String pattern = "(Waterloo)*";
-        String input = "Waterloo Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+
+        String pattern = "(Waterloo \\I)*";
+        String input = "aaa Waterloo Waterloo Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 //        String pattern = "a*b";
 //        String input = "aaab";
 
