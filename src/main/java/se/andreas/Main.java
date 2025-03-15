@@ -47,7 +47,7 @@ public class Main {
 */
 
 
-        String pattern = "(Waterloo \\I)*";
+        String pattern = "promise to (Love+Hate\\I) you";
         String input = "aaa Waterloo Waterloo Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 //        String pattern = "a*b";
 //        String input = "aaab";
